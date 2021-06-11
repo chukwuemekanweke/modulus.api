@@ -4,4 +4,8 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Nethereum.Portable" Version="3.7.0" />
+  </ItemGroup>
+
 </Project>

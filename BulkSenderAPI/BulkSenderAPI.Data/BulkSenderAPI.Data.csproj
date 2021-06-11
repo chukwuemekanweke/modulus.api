@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.12.4" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.12.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\MKOPA\.nuget\packages\mongodb.driver.core\2.12.4\build\../runtimes/win/native/libzstd.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\MKOPA\.nuget\packages\mongodb.driver.core\2.12.4\build\../runtimes/win/native/snappy32.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\MKOPA\.nuget\packages\mongodb.driver.core\2.12.4\build\../runtimes/win/native/snappy64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+</Project>
