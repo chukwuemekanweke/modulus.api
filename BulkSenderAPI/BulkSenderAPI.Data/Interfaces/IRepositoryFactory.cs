@@ -1,7 +1,4 @@
-﻿using dijitalu.ModelLayer.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BulkSenderAPI.Model.Entities;
 
 namespace BulkSenderAPI.Data
 {

@@ -1,4 +1,4 @@
-﻿using dijitalu.ModelLayer.Entity;
+﻿using BulkSenderAPI.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;

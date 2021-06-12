@@ -1,13 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BulkSenderAPI.Model.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using dijitalu.ModelLayer.Entity;
-using dijitalu.Core.DataLayer;
-using dijitalu.Common.Utils;
-using dijitalu.Common.Models;
-using dijitalu.ModelLayer.Enum;
 
 namespace BulkSenderAPI.Data
 {

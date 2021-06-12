@@ -25,4 +25,8 @@
     <Folder Include="Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BulkSenderAPI.Model\BulkSenderAPI.Model.csproj" />
+  </ItemGroup>
+
 </Project>

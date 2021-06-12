@@ -5,13 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BulkSenderAPI.Data\BulkSenderAPI.Data.csproj" />
+    <ProjectReference Include="..\BulkSenderAPI.Model\BulkSenderAPI.Model.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using dijitalu.Core.DataLayer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BulkSenderAPI.Data
 {
