@@ -1,11 +1,17 @@
 ﻿using AutoMapper;
 using BulkSenderAPI.Data;
 using BulkSenderAPI.Model.Entities;
+using BulkSenderAPI.Model.Enums;
 using BulkSenderAPI.Model.Exceptions;
 using BulkSenderAPI.Model.ServiceModels;
+using BulkSenderAPI.Service.Extensions;
 using BulkSenderAPI.Service.Implementations.Interfaces;
 using BulkSenderAPI.Service.Interfaces;
+using BulkSenderAPI.Web3Integration;
+using BulkSenderAPI.Web3Integration.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +24,15 @@ namespace BulkSenderAPI.Service.Implementations
     {
         private readonly IExcelReaderService _excelReaderService;
         private readonly IAccountPolicyService _accountPolicyService;
+        private readonly IUserService _userService;
+        private readonly Web3Utility _web3Utility;
 
-        public PayrollScheduleUploadService(IAccountPolicyService accountPolicyService,IExcelReaderService excelReaderService,IUnitOfWork unitOfWork, IMapper mapper, IServiceFactory serviceFactory) : base(unitOfWork, mapper, serviceFactory)
+        public PayrollScheduleUploadService(Web3Utility web3Utility,IUserService userService,IAccountPolicyService accountPolicyService,IExcelReaderService excelReaderService,IUnitOfWork unitOfWork, IMapper mapper, IServiceFactory serviceFactory) : base(unitOfWork, mapper, serviceFactory)
         {
             _excelReaderService = excelReaderService;
             _accountPolicyService = accountPolicyService;
+            _userService = userService;
+            _web3Utility = web3Utility;
         }
 
         public async Task UploadAsync(UploadPayrollRequest request)
@@ -54,18 +64,81 @@ namespace BulkSenderAPI.Service.Implementations
             foreach (var staff in payrollSchedule.Staffs)
             {
                 string staffNormalizedEmail = staff.Email.ToUpper();
-                Staff entity = await _unitOfWork.GetRepository<Staff>().SingleAsync(x=>x.User.NormalizedEmail== staffNormalizedEmail)
+                Staff entity = await _unitOfWork.GetRepository<Staff>().SingleAsync(x => x.EntityStatus== EntityStatus.Active && x.User.NormalizedEmail == staffNormalizedEmail);
+                ValidWalletAddressResponse validWalletAddressResponse = _web3Utility.IsValidAddress(staff.WalletAddress);
+
                 if (entity == null)
                 {
+                    
+                    if(!validWalletAddressResponse.IsValid)
+                    {
+                        throw new InvalidOperationException($"{staff.WalletAddress} is an invalid address");
+                    }
 
+                    bool isWalletAlreadyBeingUsed = await IsWalletUsedByAnother(validWalletAddressResponse.CheckSumAddress);
+                    if (!isWalletAlreadyBeingUsed)
+                    {
+                        throw new InvalidOperationException($"Wallet address for {entity.User.GetFullName()} is already in use");
+                    }
+
+                    isWalletAlreadyBeingUsed = await IsWalletUsedByAnyCompany(validWalletAddressResponse.CheckSumAddress);
+                    if (!isWalletAlreadyBeingUsed)
+                    {
+                        throw new InvalidOperationException($"Wallet address for {entity.User.GetFullName()} is already in use");
+                    }
+
+                    Guid staffDesignationId = await GetStaffDesignationAsync(request.CompanyId, staff.Position);
+                    string userId = await _userService.GetOrCreateUserAsync(staff.Email, staff.Name);
+
+
+                    entity = new Staff
+                    {
+                        EntityStatus = EntityStatus.Active,
+                        Chain = payrollSchedule.PayrollInfo.Blockchain,
+                        CompanyId = request.CompanyId,
+                        UserId = userId,
+                        StaffDesignationId = staffDesignationId,
+                        WalletAddress = validWalletAddressResponse.CheckSumAddress
+                    };
+                    _unitOfWork.GetRepository<Staff>().AddAndSetTimeStamp(entity);
                 }
                 else
                 {
-
+                    if(!string.Equals( entity.WalletAddress, validWalletAddressResponse.CheckSumAddress))
+                    {
+                        throw new InvalidOperationException($"There is a payment wallet mismatch on {entity.User.GetFullName()} account");
+                    }
                 }
             }
 
+            await _unitOfWork.SaveChangesAsync();
 
+
+        }
+
+        private async Task<Guid> GetStaffDesignationAsync(Guid companyId, string position)
+        {
+            StaffDesignation staffDesignation =await _unitOfWork.GetRepository<StaffDesignation>().SingleAsync(x => x.CompanyId == companyId && x.Position == position);
+            if (staffDesignation == null)
+            {
+                throw new InvalidOperationException($"Staff Designation Of {position} Has Not Been Registered Under This Company");
+            }
+            else
+            {
+                return staffDesignation.Id;
+            }
+        }
+
+        private async Task<bool> IsWalletUsedByAnother(string walletAddress)
+        {
+           int staffUsingThisAddress = await  _unitOfWork.GetRepository<Staff>().GetQueryableList(x => x.EntityStatus == EntityStatus.Active).CountAsync();
+           return staffUsingThisAddress >= 1 ? true : false;
+        }
+
+        private async Task<bool> IsWalletUsedByAnyCompany(string walletAddress)
+        {
+            int companyUsingThisAddress = await _unitOfWork.GetRepository<Company>().GetQueryableList(x => x.CompanyWalletAddress== walletAddress && x.EntityStatus == EntityStatus.Active).CountAsync();
+            return companyUsingThisAddress >= 1 ? true : false;
         }
     }
 }

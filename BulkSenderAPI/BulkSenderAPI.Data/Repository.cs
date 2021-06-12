@@ -1,4 +1,6 @@
 ﻿using BulkSenderAPI.Model.Entities;
+using BulkSenderAPI.Model.Enums;
+using BulkSenderAPI.Model.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -63,7 +65,7 @@ namespace BulkSenderAPI.Data
 
         private T SetDateIfDefaultDateIsFound(T entity)
         {
-            CurrentDate currentDate = DateUtilities.GetCurrentDate();
+            CurrentDate currentDate = GetCurrentDate();
             return SetDateIfDefaultDateIsFound(entity, currentDate);
         }
 
@@ -140,7 +142,7 @@ namespace BulkSenderAPI.Data
         public void SoftDelete(T entity)
         {
             var existing = _dbSet.Find(entity);
-            existing.EntityStatus = EntityStatus.InActive;
+            existing.EntityStatus = EntityStatus.Inactive;
         }
 
 
@@ -171,7 +173,7 @@ namespace BulkSenderAPI.Data
             var entity = _dbSet.Find(id);
             if (entity != null)
             {
-                entity.EntityStatus = EntityStatus.InActive;
+                entity.EntityStatus = EntityStatus.Inactive;
             }
             //}
         }
@@ -180,7 +182,7 @@ namespace BulkSenderAPI.Data
         {
             foreach (var entity in entities)
             {
-                entity.EntityStatus = EntityStatus.InActive;
+                entity.EntityStatus = EntityStatus.Inactive;
             }
         }
 
@@ -188,7 +190,7 @@ namespace BulkSenderAPI.Data
         {
             foreach (var entity in entities)
             {
-                entity.EntityStatus = EntityStatus.InActive;
+                entity.EntityStatus = EntityStatus.Inactive;
             }
         }
 
@@ -253,7 +255,7 @@ namespace BulkSenderAPI.Data
 
         private T SetUpdatedAtTimeStamp(T entity)
         {
-            CurrentDate currentDate = DateUtilities.GetCurrentDate();
+            CurrentDate currentDate = GetCurrentDate();
             return SetUpdatedAtTimeStamp(entity, currentDate);
         }
 
@@ -271,5 +273,26 @@ namespace BulkSenderAPI.Data
             }
             return entity;
         }
+
+        public static CurrentDate GetCurrentDate()
+        {
+            DateTime currentDateTime = DateTime.UtcNow;
+            double timeStamp = currentDateTime.ToTimeStamp();
+            CurrentDate currentDate = new CurrentDate(currentDateTime, timeStamp);
+            return currentDate;
+        }
+
+       
     }
+
+    internal static class DateTimeExtensions
+    {
+        public static double ToTimeStamp(this DateTime dateInstance)
+        {
+            DateTime epochDateTime = new DateTime(1970, 1, 1);
+            return (dateInstance - epochDateTime).TotalMilliseconds;
+        }
+    }
+
+
 }

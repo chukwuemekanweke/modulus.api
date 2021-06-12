@@ -12,6 +12,8 @@ namespace BulkSenderAPI.Model.Entities
         public string BusinessOwnerId { get; set; }
         public string BusinessAccountantId { get; set; }
         public decimal MaxMonthlyPayrollLimit { get; set; }
+        public string CompanyWalletAddress { get; set; }
+        public int HDWalletIndex { get; set; }
 
     }
 }

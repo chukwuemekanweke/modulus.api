@@ -7,8 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BulkSenderAPI.Data\BulkSenderAPI.Data.csproj" />
+    <ProjectReference Include="..\BulkSenderAPI.Model\BulkSenderAPI.Model.csproj" />
+    <ProjectReference Include="..\BulkSenderAPI.Service\BulkSenderAPI.Service.csproj" />
+    <ProjectReference Include="..\BulkSenderAPI.Web3Integration\BulkSenderAPI.Web3Integration.csproj" />
   </ItemGroup>
 
 </Project>

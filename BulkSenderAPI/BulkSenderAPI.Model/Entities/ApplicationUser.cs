@@ -16,5 +16,17 @@ namespace BulkSenderAPI.Model.Entities
         public DateTime UpdatedAt { get; set; }
 
         public EntityStatus EntityStatus { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string OtherName { get; set; }
+
+        public bool HasVerifiedInformation { get; set; }
+
+        public string GetFullName()
+        {
+            return $"{FirstName} {OtherName} {LastName}";
+        }
+
+        public string SignupLink { get; set; }
     }
 }

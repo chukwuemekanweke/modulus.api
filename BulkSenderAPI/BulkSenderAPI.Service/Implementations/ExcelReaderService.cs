@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using BulkSenderAPI.Model.Enums;
 
 namespace BulkSenderAPI.Service
 {
@@ -67,15 +68,19 @@ namespace BulkSenderAPI.Service
                     for (int i = 0; i < payrollScheduleInfo.Rows.Count; i++)
                     {
                         DataRow row = staffpayrollData.Rows[i];
-                        if (row.ItemArray.Length != 5)
+                        if (row.ItemArray.Length != 3)
                             throw new InvalidOperationException("payroll Schedule Sheet Column Count Does Not Match Expectations");
+                        int dayOfPayment = int.Parse(row.ItemArray[0] as string);
 
-                        decimal totalAmountForPayrol = decimal.Parse(row.ItemArray[0] as string);
-                        int dayOfPayment = int.Parse(row.ItemArray[1] as string);
+                        decimal totalAmountForPayroll = decimal.Parse(row.ItemArray[1] as string);
+                        Blockchain chain = (Blockchain)Enum.Parse(typeof(Blockchain), row.ItemArray[2] as string) ;
+
                         parsedPayrollInfo = new ParsedPayrollInfo
                         {
                             DayOfPayment = dayOfPayment,
-                            TotalMonthlyPay = totalAmountForPayrol
+                            TotalMonthlyPay = totalAmountForPayroll,
+                            Blockchain = chain,
+                            
                         };
                     }
 

@@ -15,5 +15,7 @@ namespace BulkSenderAPI.Model.Utils
         public const string OWNER_ROLE = "CompanyOwner";
         public const string ACCOUNTANT_ROLE = "Accountant";
         public const string HEAD_OF_FINANCE_ROLE = "HeadOfFinance";
+
+        public const string BASE_URL = "http://app.modulus.com";
     }
 }

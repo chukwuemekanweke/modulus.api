@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BulkSenderAPI.Model.Enums;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace BulkSenderAPI.Model.ServiceModels
     public class ParsedStaff
     {
         public string Name { get; set; }
+        public string Position { get; set; }
         public string Email { get; set; }
         public string WalletAddress { get; set; }
         public decimal Amount { get; set; }
@@ -29,5 +31,6 @@ namespace BulkSenderAPI.Model.ServiceModels
     {
         public decimal TotalMonthlyPay { get; set; }
         public int DayOfPayment { get; set; }
+        public Blockchain Blockchain { get; set; }
     }
 }

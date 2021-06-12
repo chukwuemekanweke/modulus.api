@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BulkSenderAPI.Data\BulkSenderAPI.Data.csproj" />
     <ProjectReference Include="..\BulkSenderAPI.Model\BulkSenderAPI.Model.csproj" />
+    <ProjectReference Include="..\BulkSenderAPI.Web3Integration\BulkSenderAPI.Web3Integration.csproj" />
   </ItemGroup>
 
 </Project>
